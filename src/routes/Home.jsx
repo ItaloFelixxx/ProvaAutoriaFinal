@@ -1,13 +1,41 @@
-import Header from "../components/navbar/Navbar";
-import Cards from "../components/cards/Cards";
+import { useEffect, useState } from "react";
+import { Card, Row, Container, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
-const App = () => {
+const Cards = () => {
+  const [pokemons, setPokemons] = useState([]);
+
+  useEffect(() => {
+    getPokemons();
+  },[]);
+
+  async function getPokemons() {
+    await fetch("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0").then(
+      (response) => response.json().then((data) => setPokemons(data.results))
+    );
+  }
+
   return (
     <>
-      <Header />
-      <Cards/>
+      <Container>
+        <Row className="justify-content-md-center">
+          {pokemons.map((p, index) => (
+            <Card key={index} style={{ width: "12rem" }}>
+              <Card.Img src="pokebola.png"/>
+              <Card.Body>
+                <Card.Title>
+                  {p.name[0].toUpperCase() + p.name.substring(1)}
+                </Card.Title>
+                <Link to={`/cardDescription/${index + 1}`}>
+                  <Button variant="dark">Descrição</Button>
+                </Link>
+              </Card.Body>
+            </Card>
+          ))}
+        </Row>
+      </Container>
     </>
   );
 };
 
-export default App;
+export default Cards;
